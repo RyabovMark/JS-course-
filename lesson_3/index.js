@@ -13,7 +13,7 @@ console.log(sum(1, 2)); //=>3, Последовательно складывае
 
 function curry(cb) {
   return function curried(...args) {
-      return cb.call(this, ...args);
+      return cb(...args);
   };
 }
 
