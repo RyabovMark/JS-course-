@@ -2,24 +2,31 @@
 // суммирования и/или при выводе и/или математической операции вернет конечный
 // результат fucn(2)(3)(5) = 10
 
-function sum() {
-  return Array.from(arguments).reduce((acum, num) => {
-    return acum + num;
-  }, 0);
-}
+// Предварительно почитав литературы я выяснил что каррирование работает с
+// функциями с фиксированным количеством аргументов
+// function sum() {
+//   return Array.from(arguments).reduce((acum, num) => {
+//     return acum + num;
+//   }, 0);
+// }
 
-console.log(sum(1, 2)); //=>3, Последовательно складывает все числа которые мы
-// передаем в параметры;
-
-function curry(cb) {
+function curry(func) {
   return function curried(...args) {
-      return cb(...args);
+    if (args.length >= func.length) {
+      return func.apply(this, args);
+    } else {
+      return function (args2) {
+        return curried.call(this, ...args.concat(args2));
+      };
+    }
   };
 }
 
-const func = curry(sum);
+const sum = (a, b, c) => a + b + c;
 
-console.log(func(2, 3, 4));
+let func = curry(sum);
+
+console.log(func(2)(3)(4));
 
 // 2. Преобразовать строку в объект, разделяя свойства по точке.
 const str = "one.two.three.four.five";
