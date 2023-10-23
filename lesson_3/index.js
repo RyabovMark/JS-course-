@@ -13,13 +13,7 @@ console.log(sum(1, 2)); //=>3, Последовательно складывае
 
 function curry(cb) {
   return function curried(...args) {
-    if (args.length >= cb.length) {
-      return cb.apply(this, args);
-    } else {
-      return function (...args2) {
-        return function () {}.apply(this, args.concat(args2));
-      };
-    }
+      return cb.call(this, ...args);
   };
 }
 
@@ -48,4 +42,4 @@ function fromStrToObj(str) {
   return JSON.stringify(obj, null, 2);
 }
 
-console.log(fromStrToObj(str));
+// console.log(fromStrToObj(str));
