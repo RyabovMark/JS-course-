@@ -3,13 +3,26 @@ class BaseXml {
     this.baseUrl = url;
   }
 
-  async fetchData(endpoint = "", options = {}) {
-    try {
-      const request = await fetch(this.baseUrl + endpoint, options);
-      return [await request.json(), request.ok];
-    } catch (error) {
-      console.log(error);
-    }
+  requestData(endpoint = "", method = "GET", body = null) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(method, this.baseUrl + endpoint, true);
+
+      xhr.responseType = "json";
+      xhr.setRequestHeader("Content-Type", "application/json");
+
+      xhr.onload = () => {
+        if (xhr.status >= 400) {
+          reject(xhr.response);
+        } else {
+          resolve(xhr.response);
+        }
+      };
+
+      xhr.onerror = () => reject(xhr.response);
+
+      xhr.send(JSON.stringify(body));
+    });
   }
 }
 
@@ -18,79 +31,23 @@ export default class XmlService extends BaseXml {
     super(url);
   }
 
-  async createXmlElement({ name, info = true, isImportant = true }) {
-    try {
-      const [data, status] = await this.fetchData(this.url, {
-        method: "POST",
-        "Content-Type": "application/json; charset=utf-8",
-        body: JSON.stringify({
-          name,
-          info,
-          isImportant,
-        }),
-      });
-      if (status) {
-        return data;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  async createElement({ name, info = true, isImportant = true }) {
+    return await this.requestData("", "POST", { name, info, isImportant });
   }
 
   async getCollection() {
-    // try {
-    //   const [data, status] = await this.fetchData();
-    //   if (status) {
-    //     return data;
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
-    return 'its works';
+    return await this.requestData();
   }
 
-  async getXmlElement(id) {
-    try {
-      const [data, status] = await this.fetchData(id);
-      if (status) {
-        return data;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  async getElement(id) {
+    return await this.requestData(id);
   }
 
-  async updateXmlElement({ name, info = true, isImportant = true, id }) {
-    try {
-      const [data, status] = await this.fetchData(id, {
-        method: "PATCH",
-        "Content-Type": "application/json; charset=utf-8",
-        body: JSON.stringify({
-          name,
-          info,
-          isImportant,
-        }),
-      });
-      if (status) {
-        return data;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  async updateElement({ name, info = true, isImportant = true, id }) {
+    return await this.requestData(id, "PATCH", { name, info, isImportant });
   }
 
-  async deleteXmlElement(id) {
-    try {
-      const [_, status] = await this.fetchData(id, {
-        method: "DELETE",
-        "Content-Type": "application/json; charset=utf-8",
-      });
-      if (status) {
-        return true
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  async deleteElement(id) {
+    return await this.requestData(id,'DELETE');
   }
 }
-
