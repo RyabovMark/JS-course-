@@ -1,0 +1,166 @@
+/* normalise styles import */
+@import url("reset.css");
+
+* {
+  font-family: Inrer, sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 100vh;
+}
+
+.main {
+  display: grid;
+
+  width: 1280px;
+  min-width: 320px;
+  height: 720px;
+  grid-template-columns: 229px 229px 199px 165px 226px 232px;
+  grid-template-rows: 288px 185px 248px;
+}
+
+.main__item_bigger {
+  grid-row: span 2;
+  grid-column: span 2;
+}
+
+.main__item_fatter {
+  grid-column: span 2;
+}
+
+.main__item_higher {
+  grid-row: span 2;
+}
+
+img.main__item {
+  width: 100%;
+  height: 100%;
+}
+
+.intro {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 125px 63px 48px 65px;
+}
+
+.intro h1 {
+  text-transform: uppercase;
+
+  color: #000;
+
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 110%;
+}
+
+.intro div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  width: 123px;
+}
+
+.description {
+  padding: 95px 48px 64px 65px;
+
+  background-color: #828282
+}
+
+.description p {
+  color: #F2F2F2;
+
+  font-size: 18px;
+  font-weight: 300;
+}
+
+@media screen and (width <= 1280px) {
+  .main {
+    width: auto;
+    height: auto;
+    grid-template-columns: 229px 229px 199px 165px 226px;
+    grid-template-rows: auto auto auto;
+  }
+
+  .main__item:nth-child(5) {
+    grid-row: span 2;
+    grid-column: span 2;
+  }
+}
+
+@media screen and (width <= 992px) {
+  .main {
+    grid-template-columns: 229px 229px 199px 165px;
+    grid-auto-flow: row dense;
+  }
+
+  .description {
+    display: flex;
+    align-items: center;
+
+    padding: 20px;
+  }
+}
+
+@media screen and (width <= 768px) {
+  .main {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .main__item:nth-child(5) {
+    grid-row: span 1;
+    grid-column: span 1;
+  }
+
+  .intro {
+    padding: 20px 10px;
+  }
+
+  /* добавления свойства flex - вынужденная мера, тк лично
+   мне не хватает еще одного брейкпоинта (400-500),
+    поэтому верстка этого блока начинает сходить с ума */
+  .intro h1 {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+
+    padding: 20px;
+
+    text-align: center;
+
+    font-size: 10vw;
+  }
+
+  .main svg:last-of-type {
+    grid-column: span 2;
+  }
+}
+
+@media screen and (width <= 320px) {
+  .main {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 270px auto;
+  }
+
+  .main__item:nth-child(5) {
+    grid-row: span 1;
+    grid-column: span 1;
+  }
+
+  .description {
+    padding: 10px;
+
+    font-size: 10px;
+  }
+
+  .main svg:last-of-type {
+    grid-column: span 2;
+  }
+}
