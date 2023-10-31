@@ -23,6 +23,12 @@ export default class FetchService extends BaseFetch {
     super(url);
   }
 
+  async findOne(id) {
+    const data = await this.fetchData("", "GET");
+    const collection = await data.json();
+    return collection.find((el) => el.id === id);
+  }
+
   async createElement({ name, info = true, isImportant = true }) {
     const element = await this.fetchData("", "POST", {
       body: JSON.stringify({
@@ -40,10 +46,8 @@ export default class FetchService extends BaseFetch {
   }
 
   async getElement(id) {
-    const data = await this.fetchData("", "GET");
-    const collection = await data.json();
-    const findOne = collection.find((el) => el.id === id);
-    if (!findOne) {
+    const unique = await this.findOne(id);
+    if (!unique) {
       throw new Error(
         `Невозможно получить элемент с id: ${id}, его нет в коллекции, используйте другой id`,
       );
@@ -53,10 +57,8 @@ export default class FetchService extends BaseFetch {
   }
 
   async updateElement(id, { name, info = true, isImportant = true }) {
-    const data = await this.fetchData("", "GET");
-    const collection = await data.json();
-    const findOne = collection.find((el) => el.id === id);
-    if (!findOne) {
+    const unique = await this.findOne(id);
+    if (!unique) {
       throw new Error(
         `Невозможно обновить элемент с id: ${id}, его нет в коллекции, используйте другой id`,
       );

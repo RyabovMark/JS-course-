@@ -6,7 +6,7 @@ class BaseXml {
   requestData(endpoint = "", method = "GET", body = null) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open(method, this.baseUrl + endpoint, true);
+      xhr.open(method, this.baseUrl + "/" + endpoint, true);
 
       xhr.responseType = "json";
       xhr.setRequestHeader("Content-Type", "application/json");
@@ -20,8 +20,7 @@ class BaseXml {
       };
 
       xhr.onerror = () => reject(xhr.response);
-
-      xhr.send(JSON.stringify(body));
+      xhr.send(body ? JSON.stringify(body) : null);
     });
   }
 }
@@ -29,6 +28,11 @@ class BaseXml {
 export default class XmlService extends BaseXml {
   constructor(url) {
     super(url);
+  }
+
+  async findOne(id) {
+    const collection = await this.requestData("", "GET");
+    return collection.find((el) => el.id === id);
   }
 
   async createElement({ name, info = true, isImportant = true }) {
@@ -40,14 +44,42 @@ export default class XmlService extends BaseXml {
   }
 
   async getElement(id) {
-    return await this.requestData(id);
+    const unique = await this.findOne(id);
+    if (!unique) {
+      throw new Error(
+        `Невозможно получить элемент с id: ${id}, его нет в коллекции, используйте другой id`,
+      );
+    }
+    return await this.requestData(id, "GET");
   }
 
-  async updateElement({ name, info = true, isImportant = true, id }) {
+  async updateElement(id, { name, info = true, isImportant = true }) {
+    const unique = await this.findOne(id);
+    if (!unique) {
+      throw new Error(
+        `Невозможно изменить элемент с id: ${id}, его нет в коллекции, используйте другой id`,
+      );
+    }
     return await this.requestData(id, "PATCH", { name, info, isImportant });
   }
 
   async deleteElement(id) {
-    return await this.requestData(id,'DELETE');
+    const collection = await this.requestData();
+    let lastId;
+    if (id) {
+      const findOne = collection.find((el) => el.id === id);
+      if (!findOne) {
+        throw new Error(
+          `Невозможно удалить элемент с id: ${id}, его нет в коллекции, используйте другой id`,
+        );
+      }
+      lastId = id;
+    } else {
+      lastId = collection[collection.length - 2].id;
+    }
+
+    await this.requestData(lastId, "DELETE");
+
+    return lastId
   }
 }

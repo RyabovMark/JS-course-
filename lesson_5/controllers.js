@@ -42,7 +42,7 @@ class Controllers {
 
   async updateElement(id, body) {
     try {
-      const element = await this.methods.updateElement(id, body);
+      const element = await this.methods.updateElement(id, { ...body });
       console.log(`Элемент с id: ${id} был изменен:`, element);
     } catch (error) {
       console.error(error);
@@ -62,14 +62,14 @@ class Controllers {
 }
 
 //Класс Controller позволяет быстро переключать между fetch и xml
-const data = new Controllers("http://37.220.80.108/tasks", "fetch");
+const data = new Controllers("http://37.220.80.108/tasks", "xml");
 
 data
   .collection()
   .then(() => data.getElement(700)) //Получаем элемент, который есть в коллекции
   .then(() => data.getElement(9999)) //Нет в коллекции, кейс на проверку
   // введенного id
-  .then(() => data.updateElement(700, { name: "ItS kjbworks" })) //Изменяю
+  .then(() => data.updateElement(700, { name: "ItS kjbw12orks" })) //Изменяю
   // элемент коллекции
   .then(() => data.getElement(700)) //Проверяю изменения
   .then(() => data.updateElement(9999, { name: "ItS kjbworks" })) // Пытаюсь
@@ -83,6 +83,6 @@ data
       }), //создаю элемент
   )
   .then(() => data.deleteElement()) //Удаляю элемент таблицы, для удобства -
-  // удаляет предпоследний элемент таблицы, так последний создали на строчку выше
+  //  удаляет предпоследний элемент таблицы
   .then(() => data.deleteElement(9999)); //Пытаюсь удалить элемент которого нет в
 // таблице
