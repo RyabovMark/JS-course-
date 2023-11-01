@@ -1,5 +1,5 @@
 import { Methods } from './types/enums';
-import { IBody } from './types/interfaces';
+import { IBody, IPost } from './types/interfaces';
 import { Options, PartialPost } from './types/types';
 
 class BaseFetch {
@@ -35,7 +35,7 @@ class FetchService extends BaseFetch {
   async findOne(id: string): Promise<PartialPost> {
     const data: Response = await this.fetchData('', 'GET');
     const collection = await data.json();
-    return collection.find((el) => el.id == id);
+    return collection.find((el): boolean => el.id == id);
   }
 
   async createElement({ name, info = true, isImportant = true }: IBody): Promise<PartialPost> {
